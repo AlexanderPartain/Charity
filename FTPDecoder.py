@@ -21,9 +21,9 @@ data = []
  
 ftp.dir()
 
-#takes dir listing 
+#takes directory listing 
 binary_String = ""
-#needs to get dir list
+#needs to get directory list
 #binary_String = 
-#decode(binary_String, int(mode,10)) 
+#decode(binary_String, 10) can modify when we get parameters 
 ftp.quit()
