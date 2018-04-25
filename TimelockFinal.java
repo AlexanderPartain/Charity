@@ -122,7 +122,8 @@ class TimelockFinal
 	public static void getTimeCode(Calendar systemTime, Calendar epochTime){
 		
 		long systemSeconds = systemTime.get(systemTime.SECOND);
-		long timeAfterEpoch = ((systemTime.getTimeInMillis()-epochTime.getTimeInMillis())/(1000));
+		long timeAfterEpochRaw = ((systemTime.getTimeInMillis()-epochTime.getTimeInMillis())/(1000));
+		long timeAfterEpoch = timeAfterEpochRaw -(timeAfterEpochRaw%60);	
 		
 		
 		String holyHash = md5Hash(md5Hash(Long.toString(timeAfterEpoch)));
