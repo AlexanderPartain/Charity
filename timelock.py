@@ -21,7 +21,7 @@ epoch = datetime.datetime.utcfromtimestamp(epoch.timestamp())
 #get acutally epoch times
 real_epoch = int(time.time()) 
 
-################ computer time ############
+################ computer time ##################
 #debugging with a set epoch
 #sys_time = int(time.mktime(time.strptime('2015 05 15 14 00 00', p)))
 #comment this out if debuggin w/out set epoch 
