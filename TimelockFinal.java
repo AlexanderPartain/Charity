@@ -1,3 +1,11 @@
+// Team Name: Charity (Kimberly Atienza, Joesph Bingham, Keith Horace, Darren Johnson, Ryan Parker, Alexander Partain, Emiley Smith, Kenton Wilhelm)
+// Date: 4/25/18
+// Assignment: TIMELOCK
+
+// compile in linux:  "javac TimelockFinal.java"
+// run in linux: "java TimelockFinal < epoch.txt"
+//		where epoch.txt has the epoch date in it
+
 import java.util.*;
 import java.text.*;
 import java.security.*;
@@ -17,8 +25,6 @@ class TimelockFinal
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		SimpleDateFormat dateParser = new SimpleDateFormat("yyyy MM dd HH mm ss");
 		Calendar systemTime = Calendar.getInstance();
-		Calendar systemTime2 = Calendar.getInstance();
-		Calendar systemTime3 = Calendar.getInstance();
 		Calendar epochTime = Calendar.getInstance();
 		
 		
@@ -31,35 +37,13 @@ class TimelockFinal
 		}
 		
 		//set the system seconds to line up with the epoch seconds
-		systemTime.set(systemTime.SECOND,epochTime.get(epochTime.SECOND));
 		//zero out the system milliseconds, we don't need them
 		systemTime.set(systemTime.MILLISECOND,0);
-		//copy this to the other times
-		systemTime2.setTime(systemTime.getTime());
-		systemTime3.setTime(systemTime.getTime());
-		
-		//this is where the DST comes in. technically, we are in UTC so there is no DST. but on the 
-		//	off chance that gourd throws some weird curveball I have it calculating hashes for times
-		//  1 hour ahead and 1 hour behind. The first hash should be the correct code though.
-		systemTime2.set(systemTime2.HOUR_OF_DAY,systemTime2.get(systemTime2.HOUR_OF_DAY)-1);
-		systemTime3.set(systemTime3.HOUR_OF_DAY,systemTime3.get(systemTime3.HOUR_OF_DAY)+1);
 		
 
 		//getTimeCode takes the two times, finds the difference in seconds, and then spits out the timeCode
 		// this is done 3 times.
 		getTimeCode(systemTime, epochTime);
-		
-		System.out.println("");
-		System.out.println("- 1 hour(DST):");
-		System.out.println("");
-		
-		getTimeCode(systemTime2, epochTime);
-		
-		System.out.println("");
-		System.out.println("+ 1 hour:");
-		System.out.println("");
-		
-		getTimeCode(systemTime3, epochTime);
 		
 	}
 	
@@ -120,6 +104,17 @@ class TimelockFinal
 	}
 	
 	public static void getTimeCode(Calendar systemTime, Calendar epochTime){
+		
+		
+		if(TimeZone.getTimeZone("US/Central").inDaylightTime(systemTime.getTime())){
+			int currentHour = systemTime.get(systemTime.HOUR_OF_DAY);
+			systemTime.set(systemTime.HOUR_OF_DAY, currentHour-1);
+		}
+		
+		if(TimeZone.getTimeZone("US/Central").inDaylightTime(epochTime.getTime())){
+			int currentHour = epochTime.get(epochTime.HOUR_OF_DAY);
+			epochTime.set(epochTime.HOUR_OF_DAY, currentHour-1);
+		}
 		
 		long systemSeconds = systemTime.get(systemTime.SECOND);
 		long timeAfterEpochRaw = ((systemTime.getTimeInMillis()-epochTime.getTimeInMillis())/(1000));
