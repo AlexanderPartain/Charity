@@ -40,13 +40,13 @@ class TimelockFinal
 		//zero out the system milliseconds, we don't need them
 		systemTime.set(systemTime.MILLISECOND,0);
 		
+		
 
 		//getTimeCode takes the two times, finds the difference in seconds, and then spits out the timeCode
-		// this is done 3 times.
 		getTimeCode(systemTime, epochTime);
 		
 	}
-	
+	//hashing function
 	public static String md5Hash(String hash){
 		try{
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -62,7 +62,7 @@ class TimelockFinal
 		
 		return "";
 	}
-	
+	//grabs and returns the letters from a given hash
 	public static String letterCode(String hash){
 		
 		int j = 0;
@@ -83,6 +83,7 @@ class TimelockFinal
 		return "ee";
 	}
 	
+	//grabs and returns the numbers from a given a hash
 	public static String numCode(String hash){
 		
 		int j = 0;
@@ -103,31 +104,58 @@ class TimelockFinal
 		return "12";
 	}
 	
+	public static char middleCharacter(String hash){
+		
+		String timeCode = "";
+		
+		return (hash.charAt(hash.length()-1)); 
+	}
+	
+	//magic function that gets the Timecode From 2 different times
 	public static void getTimeCode(Calendar systemTime, Calendar epochTime){
 		
+		//this is used to tell if either time is in DST and adjusts the time accordingly
 		
+		
+		/*
 		if(TimeZone.getTimeZone("US/Central").inDaylightTime(systemTime.getTime())){
+			System.out.println("systemtrue");
 			int currentHour = systemTime.get(systemTime.HOUR_OF_DAY);
 			systemTime.set(systemTime.HOUR_OF_DAY, currentHour-1);
 		}
+		*/
 		
 		if(TimeZone.getTimeZone("US/Central").inDaylightTime(epochTime.getTime())){
 			int currentHour = epochTime.get(epochTime.HOUR_OF_DAY);
-			epochTime.set(epochTime.HOUR_OF_DAY, currentHour-1);
+			epochTime.set(epochTime.HOUR_OF_DAY, currentHour+5);
+		}
+		else{
+			int currentHour = epochTime.get(epochTime.HOUR_OF_DAY);
+			epochTime.set(epochTime.HOUR_OF_DAY, currentHour+6);
 		}
 		
-		long systemSeconds = systemTime.get(systemTime.SECOND);
+		
+		
+		
+		
+		//This takes the difference in times and subtracts the modded seconds to remain within the time interval
 		long timeAfterEpochRaw = ((systemTime.getTimeInMillis()-epochTime.getTimeInMillis())/(1000));
 		long timeAfterEpoch = timeAfterEpochRaw -(timeAfterEpochRaw%60);	
 		
-		
+		//double hash the seconds
 		String holyHash = md5Hash(md5Hash(Long.toString(timeAfterEpoch)));
 		String timeCode = "";
 		
+		//get the code from the hash and print it out
 		timeCode += letterCode(holyHash);
 		timeCode += numCode(holyHash);
 		SimpleDateFormat dateParser = new SimpleDateFormat("yyyy MM dd HH mm ss");
+		dateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
 		
+			System.out.println(dateParser.format(epochTime.getTime()));
+			System.out.println(dateParser.format(systemTime.getTime()));
+			System.out.println(timeAfterEpoch);
+			System.out.println(holyHash);	
 			System.out.println(timeCode);
 	}
 
